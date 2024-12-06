@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  frontend:
+    build:
+      context: ./Techdome-frontend
+    ports:
+      - "3000:80" # Maps port 3000 on your machine to port 80 in the container
+    depends_on:
+      - backend
+    networks:
+      - techdome-network
+
+  backend:
+    build:
+      context: ./Techdome-backend
+    ports:
+      - "5000:5000" # Maps port 5000 on your machine to port 5000 in the container
+    environment:
+      - DATABASE_URL=mysql://root:example@database:3306/mydb
+    depends_on:
+      - database
+    networks:
+      - techdome-network
+
+  database:
+    image: mysql:5.7
+    ports:
+      - "3306:3306" # Maps port 3306 on your machine to port 3306 in the container
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    networks:
+      - techdome-network
+
+networks:
+  techdome-network:
+    driver: bridge
